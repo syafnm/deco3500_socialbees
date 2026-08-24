@@ -3,6 +3,7 @@
 This repository is used to store and organise all files and materials related to our Social & Mobile Computing group project.
 
 [Team Charter](https://uq-my.sharepoint.com/:w:/g/personal/s4984748_uq_edu_au/IQBgnXDs6RobSapSkEJaAlLvAZUEDmi5UwmtYW-HTtN2_7M?e=JiQ2jk)
+
 [Team Miro Board](https://miro.com/app/board/uXjVHwO0LRk=/?share_link_id=171500850343)
 
 ## Repository Contents
