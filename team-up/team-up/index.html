@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Team Up</title>
+  <meta name="description" content="Find teammates in class by colour, icon and a quick chat.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/landing.css">
+</head>
+<body>
+  <header class="landing-top">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="1" y="1" width="12" height="12" rx="3.5" fill="#2E5BDA"/>
+        <rect x="15" y="1" width="12" height="12" rx="3.5" fill="#F0A202"/>
+        <rect x="1" y="15" width="12" height="12" rx="3.5" fill="#0B8576"/>
+        <rect x="15" y="15" width="12" height="12" rx="3.5" fill="#7B4FD6"/>
+      </svg>
+      Team Up
+    </a>
+  </header>
+
+  <main class="landing">
+    <section class="landing__hero">
+      <h1>Find your people before you pick your team.</h1>
+      <p class="landing__lede">Everyone gets a card. Your colour is what you're into, your icon is how you work. Pair up with anyone, use the questions to get to know each other, and repeat.</p>
+
+      <div class="fan" aria-hidden="true" id="fan"></div>
+    </section>
+
+    <section class="landing__paths">
+      <form class="panel path" id="studentForm" novalidate>
+        <h2>Joining a class</h2>
+        <p class="muted">Scan the QR code on the screen, or type the 6-letter code your tutor shows.</p>
+        <div class="field">
+          <label for="code">Session code</label>
+          <input class="input input--code" id="code" name="code" autocomplete="off" autocapitalize="characters"
+            maxlength="6" placeholder="ABC234" required>
+        </div>
+        <p class="error" id="codeError"></p>
+        <button class="btn btn--primary btn--block" type="submit">Join session</button>
+      </form>
+
+      <div class="panel path path--tutor">
+        <h2>Running a class</h2>
+        <p class="muted">Set up a session for your course, put the QR code on the projector, and run the rounds from your laptop.</p>
+        <a class="btn btn--ghost btn--block" href="tutor/setup.html">Set up a session</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/logic.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script>
+    (function () {
+      const { ui } = TU;
+      // the four interest cards, fanned out
+      const pairs = [['research', 'idea'], ['creative', 'collaborator'], ['technology', 'solver'], ['management', 'planner']];
+      ui.$('#fan').innerHTML = pairs.map(([i, s]) => ui.card({ interest: i, style: s, size: 'sm' })).join('');
+
+      const form = ui.$('#studentForm');
+      const input = ui.$('#code');
+      input.addEventListener('input', () => { input.value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const code = input.value.trim();
+        if (code.length !== 6) {
+          ui.$('#codeError').textContent = 'Session codes are 6 characters.';
+          input.classList.add('is-invalid');
+          return;
+        }
+        location.href = 'student/join.html?s=' + encodeURIComponent(code);
+      });
+    })();
+  </script>
+</body>
+</html>

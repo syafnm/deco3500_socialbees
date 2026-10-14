@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dashboard · Team Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/tutor.css">
+</head>
+<body class="tutor">
+  <header class="topbar topbar--dash">
+    <a class="brand" href="setup.html" aria-label="Team Up, back to setup">
+      <svg class="brand__mark" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="1" y="1" width="12" height="12" rx="3.5" fill="#2E5BDA"/>
+        <rect x="15" y="1" width="12" height="12" rx="3.5" fill="#F0A202"/>
+        <rect x="1" y="15" width="12" height="12" rx="3.5" fill="#0B8576"/>
+        <rect x="15" y="15" width="12" height="12" rx="3.5" fill="#7B4FD6"/>
+      </svg>
+      <span class="brand__word">Team Up</span>
+    </a>
+    <div class="topbar__session" id="sessionTitle"></div>
+    <div class="topbar__actions">
+      <button class="btn btn--ghost btn--sm" id="openProjector" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <span class="hide-sm">Projector view</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="stepper" aria-label="Session progress">
+    <ol id="stepper"></ol>
+    <span class="stepper__round" id="roundLabel"></span>
+  </nav>
+
+  <main class="dash" id="dash">
+    <aside class="dash__side">
+      <section class="panel control" id="control" aria-live="polite"></section>
+
+      <section class="panel join">
+        <h2>Students join here</h2>
+        <div class="join__qr" id="qr"></div>
+        <p class="join__code" id="joinCode"></p>
+        <p class="join__url small muted" id="joinUrl"></p>
+        <div class="join__btns">
+          <button class="btn btn--ghost btn--sm" id="copyLink" type="button">Copy link</button>
+          <a class="btn btn--ghost btn--sm" id="openStudent" target="_blank" rel="noopener">Open as student</a>
+        </div>
+        <div id="syncNote"></div>
+      </section>
+    </aside>
+
+    <section class="dash__main">
+      <div class="stats" id="stats"></div>
+
+      <div class="tabs" role="tablist" aria-label="Session details">
+        <button class="tab" role="tab" id="tab-people" aria-controls="panel-people" aria-selected="true">People</button>
+        <button class="tab" role="tab" id="tab-groups" aria-controls="panel-groups" aria-selected="false">Pairs</button>
+        <button class="tab" role="tab" id="tab-responses" aria-controls="panel-responses" aria-selected="false">Team-up interest</button>
+        <button class="tab" role="tab" id="tab-teams" aria-controls="panel-teams" aria-selected="false">Teams <span class="tab__count" id="teamsCount" hidden></span></button>
+      </div>
+
+      <div class="tabpanel" role="tabpanel" id="panel-people" aria-labelledby="tab-people"></div>
+      <div class="tabpanel" role="tabpanel" id="panel-groups" aria-labelledby="tab-groups" hidden></div>
+      <div class="tabpanel" role="tabpanel" id="panel-responses" aria-labelledby="tab-responses" hidden></div>
+      <div class="tabpanel" role="tabpanel" id="panel-teams" aria-labelledby="tab-teams" hidden></div>
+    </section>
+  </main>
+
+  <div class="missing" id="missing" hidden>
+    <h1>Session not found</h1>
+    <p class="muted">This code doesn't match a session on this device.</p>
+    <a class="btn btn--primary" href="setup.html">Set up a new session</a>
+  </div>
+
+  <!-- Projector view: big QR, code, legend and timer for the room -->
+  <dialog class="projector" id="projector" aria-label="Projector view">
+    <button class="btn btn--ghost btn--sm projector__close" id="closeProjector" type="button">Close</button>
+    <div class="projector__body" id="projectorBody"></div>
+  </dialog>
+
+  <script src="../assets/vendor/qrcode-generator.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/logic.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/tutor-dashboard.js"></script>
+</body>
+</html>

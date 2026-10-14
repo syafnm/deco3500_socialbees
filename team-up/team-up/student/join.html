@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F8E6EC">
+  <title>Join · Team Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/student.css">
+</head>
+<body class="student">
+  <div class="phone">
+    <header class="s-top">
+      <a class="brand" href="../index.html">
+        <svg class="brand__mark" viewBox="0 0 28 28" aria-hidden="true">
+          <rect x="1" y="1" width="12" height="12" rx="3.5" fill="#2E5BDA"/>
+          <rect x="15" y="1" width="12" height="12" rx="3.5" fill="#F0A202"/>
+          <rect x="1" y="15" width="12" height="12" rx="3.5" fill="#0B8576"/>
+          <rect x="15" y="15" width="12" height="12" rx="3.5" fill="#7B4FD6"/>
+        </svg>
+        Team Up
+      </a>
+    </header>
+
+    <main class="s-main">
+      <!-- shown when the link has no code, or the code is wrong -->
+      <form class="s-view stack" id="codeForm" hidden novalidate>
+        <h1>Enter your session code</h1>
+        <p class="muted">It's the 6 characters under the QR code on the screen.</p>
+        <div class="field">
+          <label for="code">Session code</label>
+          <input class="input input--code" id="code" autocomplete="off" autocapitalize="characters" maxlength="6" placeholder="ABC234">
+        </div>
+        <p class="error" id="codeError"></p>
+        <button class="btn btn--primary btn--block" type="submit">Continue</button>
+      </form>
+
+      <!-- shown once the session is found -->
+      <form class="s-view stack" id="joinForm" hidden novalidate>
+        <div class="session-tag" id="sessionTag"></div>
+        <h1>Join the session</h1>
+        <p class="muted">Your tutor uses your name and student ID to see who met who. Other students only see your first name.</p>
+
+        <div class="field">
+          <label for="name">Your name</label>
+          <input class="input" id="name" autocomplete="given-name" maxlength="30" placeholder="First name is fine">
+        </div>
+        <div class="field">
+          <label for="sid">Student ID</label>
+          <input class="input" id="sid" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="e.g. 47123456">
+          <span class="hint">Joining again on a new phone? Use the same ID and you'll keep your card.</span>
+        </div>
+        <p class="error" id="joinError"></p>
+        <button class="btn btn--primary btn--block" type="submit">Join</button>
+        <div id="syncNote"></div>
+      </form>
+
+      <div class="s-view" id="loading"><p class="muted">Finding your session…</p></div>
+    </main>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/logic.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/student-join.js"></script>
+</body>
+</html>

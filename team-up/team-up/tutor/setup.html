@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Set up a session · Team Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/tutor.css">
+</head>
+<body class="tutor">
+  <header class="topbar">
+    <a class="brand" href="../index.html">
+      <svg class="brand__mark" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="1" y="1" width="12" height="12" rx="3.5" fill="#2E5BDA"/>
+        <rect x="15" y="1" width="12" height="12" rx="3.5" fill="#F0A202"/>
+        <rect x="1" y="15" width="12" height="12" rx="3.5" fill="#0B8576"/>
+        <rect x="15" y="15" width="12" height="12" rx="3.5" fill="#7B4FD6"/>
+      </svg>
+      Team Up
+    </a>
+    <span class="topbar__role">Tutor</span>
+  </header>
+
+  <main class="setup">
+    <section class="setup__form">
+      <h1>Set up a session</h1>
+      <p class="muted">Students will see the course and session name when they scan in.</p>
+
+      <form class="panel stack" id="setupForm" novalidate>
+        <div class="setup__row">
+          <div class="field">
+            <label for="course">Course code</label>
+            <input class="input" id="course" name="course" placeholder="DECO3500" maxlength="12" required>
+          </div>
+          <div class="field">
+            <label for="title">Session name</label>
+            <input class="input" id="title" name="title" placeholder="Week 4 tutorial" maxlength="40" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="tutor">Your name</label>
+          <input class="input" id="tutor" name="tutor" placeholder="e.g. Dr Boden" maxlength="40" required>
+        </div>
+
+        <div class="field">
+          <label for="minutes">Conversation length per round</label>
+          <div class="range">
+            <input type="range" id="minutes" name="minutes" min="5" max="15" step="1" value="8">
+            <output for="minutes" id="minutesOut">8 min</output>
+          </div>
+          <span class="hint">5 to 15 minutes. You can change it before each round.</span>
+        </div>
+
+        <div class="field">
+          <label for="teamSize">Students per team</label>
+          <div class="numfield">
+            <button class="btn btn--ghost btn--sm" type="button" data-step="-1" aria-label="One fewer per team">−</button>
+            <input class="input input--num" type="number" id="teamSize" name="teamSize" min="2" max="8" value="4" inputmode="numeric">
+            <button class="btn btn--ghost btn--sm" type="button" data-step="1" aria-label="One more per team">+</button>
+          </div>
+          <span class="hint">Used when you build the final project teams. You can change it later on the dashboard.</span>
+        </div>
+
+        <label class="toggle">
+          <input type="checkbox" id="repeats" name="repeats">
+          <span class="toggle__track" aria-hidden="true"></span>
+          <span>
+            <strong>Allow repeat partners</strong>
+            <span class="hint">Off means students must meet someone new each round.</span>
+          </span>
+        </label>
+
+        <p class="error" id="formError"></p>
+        <button class="btn btn--primary btn--block" type="submit">Create session and get QR code</button>
+      </form>
+    </section>
+
+    <aside class="setup__side">
+      <section class="panel how">
+        <h2>How a session runs</h2>
+        <ol class="how__steps">
+          <li><strong>Students join</strong> by scanning your QR code and entering their name and student ID.</li>
+          <li><strong>They answer two questions.</strong> Interest gives them a colour, working style gives them an icon.</li>
+          <li><strong>Matching.</strong> They walk around and pair up with anyone. A pair forms when both enter each other's PIN.</li>
+          <li><strong>Conversations.</strong> Each pair gets three questions based on their cards, and you run the timer.</li>
+          <li><strong>Next round.</strong> They keep their colour and pick a working style again.</li>
+          <li><strong>Teams.</strong> After each round students say who they'd team up with. You build teams from the mutual matches and confirm them.</li>
+        </ol>
+      </section>
+
+      <section class="panel" id="recentWrap" hidden>
+        <h2>Your sessions</h2>
+        <ul class="recent" id="recent"></ul>
+      </section>
+    </aside>
+  </main>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/firebase-config.js"></script>
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/logic.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script src="../assets/js/tutor-setup.js"></script>
+</body>
+</html>

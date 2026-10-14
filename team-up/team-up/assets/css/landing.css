@@ -1,0 +1,34 @@
+/* Landing page */
+.landing-top { padding: 1rem clamp(1rem, 4vw, 3rem); }
+
+.landing {
+  max-width: 1120px; margin: 0 auto;
+  padding: 1rem clamp(1rem, 4vw, 3rem) 3rem;
+  display: grid; gap: 2.5rem;
+}
+.landing__hero h1 {
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  font-weight: 700; letter-spacing: -.03em; color: var(--maroon);
+  max-width: 14ch;
+}
+.landing__lede { margin-top: 1rem; max-width: 46ch; font-size: var(--t-lg); color: var(--muted); }
+
+.fan {
+  display: flex; margin-top: 2rem; padding-left: 1rem;
+}
+.fan .idcard { width: clamp(84px, 20vw, 140px); margin-left: -1rem; box-shadow: var(--shadow); }
+.fan .idcard:nth-child(1) { transform: rotate(-9deg) translateY(10px); }
+.fan .idcard:nth-child(2) { transform: rotate(-3deg); }
+.fan .idcard:nth-child(3) { transform: rotate(3deg); }
+.fan .idcard:nth-child(4) { transform: rotate(9deg) translateY(10px); }
+
+.landing__paths { display: grid; gap: 1rem; align-content: start; }
+.path { display: grid; gap: 1rem; }
+.input--code {
+  font-family: var(--font-display); font-size: var(--t-xl); font-weight: 700;
+  letter-spacing: .3em; text-transform: uppercase; text-align: center;
+}
+
+@media (min-width: 860px) {
+  .landing { grid-template-columns: 1.2fr 1fr; align-items: center; min-height: calc(100dvh - 80px); }
+}
