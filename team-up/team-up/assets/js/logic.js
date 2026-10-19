@@ -198,11 +198,55 @@
       return { status: 'waiting', name: other.name };
     },
 
-    giveFeedback(s, pid, answers) {
+    giveFeedback(s, pid, answers, round = s.round) {
       Object.entries(answers).forEach(([to, choice]) => {
-        s.feedback[`${s.round}_${pid}_${to}`] = { round: s.round, from: pid, to, choice, at: Date.now() };
+        const key = `${round}_${pid}_${to}`;
+
+        if (s.feedback[key]) {
+          return;
+        }
+
+        s.feedback[key] = {
+          round,
+          from: pid,
+          to,
+          choice,
+          at: Date.now()
+        };
       });
     },
+
+    skipMissingFeedback(s, round) {
+      const groups = Object.values(s.groups || {});
+      const feedback = s.feedback || {};
+
+      groups
+        .filter(group => group.round === round)
+        .forEach(group => {
+          group.members.forEach(pid => {
+            group.members
+              .filter(otherId => otherId !== pid)
+              .forEach(otherId => {
+                const key = `${round}_${pid}_${otherId}`;
+
+                if (!feedback[key]) {
+                  feedback[key] = {
+                    round,
+                    from: pid,
+                    to: otherId,
+                    choice: null,
+                    status: "skipped",
+                    at: Date.now()
+                  };
+                }
+              });
+          });
+        });
+        s.feedback = feedback;
+    },
+    
+    
+
     feedbackDone(s, pid) {
       const partners = L.partnersOf(s, pid);
       return partners.every(p => s.feedback[`${s.round}_${pid}_${p.id}`]);
@@ -265,9 +309,18 @@
     responses(s) {
       const fb = Object.values(s.feedback);
       const choice = (from, to) => {
-        const list = fb.filter(f => f.from === from && f.to === to).sort((x, y) => y.round - x.round);
+        const list = fb
+          .filter(f =>
+            f.from === from &&
+            f.to === to &&
+            ['yes', 'maybe', 'no'].includes(f.choice)
+          )
+
+          .sort((x, y) => y.round - x.round);
+        
         return list[0] ? list[0].choice : null;
       };
+
       const pairsSeen = new Set();
       const rows = [];
       Object.values(s.groups).forEach(g => {
@@ -304,7 +357,10 @@
           cells.push(partners.map(x => x.name).join('; '));
           cells.push(partners.map(x => {
             const f = s.feedback[`${r}_${p.id}_${x.id}`];
-            return f ? `${x.name}: ${f.choice}` : '';
+
+            return f && ['yes', 'maybe', 'no'].includes(f.choice)
+              ? `${x.name}: ${f.choice}`
+              : '';
           }).filter(Boolean).join('; '));
         });
         lines.push(cells.map(esc).join(','));
@@ -327,9 +383,18 @@
     /* latest answer a gave about b, across all rounds */
     choice(s, a, b) {
       let best = null;
+
       Object.values(s.feedback).forEach(f => {
-        if (f.from === a && f.to === b && (!best || f.round > best.round)) best = f;
+        if (
+          f.from === a &&
+          f.to === b &&
+          ['yes', 'maybe', 'no'].includes(f.choice) &&
+          (!best || f.round > best.round)
+        ) {
+          best = f;
+        }
       });
+      
       return best ? best.choice : null;
     },
     score(s, a, b) {

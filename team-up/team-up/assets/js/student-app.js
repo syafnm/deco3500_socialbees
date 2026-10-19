@@ -11,26 +11,126 @@
   let S = null;
   let lastSig = '';
   let lastView = '';
-  const local = { pickInterest: null, pickStyle: null, editing: null, fb: {}, busy: false };
+  const local = { 
+    pickInterest: null,
+    pickStyle: null,
+    editing: null,
+    fb: {},
+    busy: false,
+    feedbackSubmitted: false
+  };
 
   const view = $('#view');
+
+  /* Feature: Display dialog when the conversation has started by the tutor */
+
+  const conversationModal = $('#conversationModal');
+  const conversationModalMessage = $('#conversationModalMessage');
+  const conversationModalEndTime = $('#conversationModalEndTime');
+
+  let lastConversationStart = null;
+
+  $('#conversationModalClose').addEventListener('click', () => {
+    conversationModal.close();
+  });
+
+  function checkConversationStart() {
+    if (!S || S.phase !== 'talking' || !S.roundEndsAt) {
+      return;
+    }
+
+    const startedAt = S.roundEndsAt - S.settings.roundMinutes * 60000;
+    const startKey = `${S.round}_${startedAt}`;
+
+    if (lastConversationStart === startKey) {
+      return;
+    }
+
+    lastConversationStart = startKey;
+
+    const endTime = new Date(S.roundEndsAt);
+
+    conversationModalMessage.textContent = `You have ${S.settings.roundMinutes} minutes to chat with your partner.`;
+
+    conversationModalEndTime.textContent = `This conversation will end at ${endTime.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    })}.`;
+
+    if (Date.now() < S.roundEndsAt) {
+      conversationModal.showModal();
+    }
+  }
+
   const CHOICES = [
     { id: 'yes', label: 'Keen to team up' },
     { id: 'maybe', label: 'Maybe' },
     { id: 'no', label: 'Not this time' }
   ];
 
+  function getPendingFeedbackRound(session, participantId) {
+    if (!session || !participantId) return null;
+
+    const phase = logic.effectivePhase(session);
+
+    const lastEligibleRound = 
+      phase === 'roundEnd' || phase === 'finished'
+        ? session.round
+        : session.round - 1;
+
+    const feedback = session.feedback || {};
+
+    for (let round = 1; round <= lastEligibleRound; round++) {
+      const partners = logic.partnersOf(
+        session,
+        participantId,
+        round
+      );
+
+      if (!partners || partners.length === 0) {
+        continue;
+      }
+
+      const hasPendingFeedback = partners.some(partner => {
+        const key = `${round}_${participantId}_${partner.id}`;
+        return !feedback[key];
+      });
+
+      if (hasPendingFeedback) {
+        return round;
+      }
+    }
+
+    return null;
+  }
+  
+  
   /* ---------- which screen? ---------- */
   function currentView() {
     if (!S) return 'missing';
+
     const p = S.participants[me];
     if (!p) return 'removed';
+
+    const pendingFeedbackRound = getPendingFeedbackRound(S, me);
+    if (pendingFeedbackRound !== null) {
+      return 'feedback';
+    }
+
     const phase = logic.effectivePhase(S);
     const myTeam = S.teamsConfirmedAt && logic.teams.teamOf(S, me);
+
+    console.log('Feedback Debug:', {
+      phase,
+      rawPhase: S.phase,
+      round: S.round,
+      roundEndsAt: S.roundEndsAt,
+      pendingFeedbackRound: getPendingFeedbackRound(S, me)
+    });
+    
     if (phase === 'finished') return myTeam ? 'team' : 'finished';
     if (phase === 'lobby') return 'lobby';
     if (phase === 'roundEnd') {
-      if (logic.groupOf(S, me) && !logic.feedbackDone(S, me)) return 'feedback';
       return myTeam ? 'team' : 'roundwait';
     }
     if (!p.interest || local.editing === 'q1') return 'q1';
@@ -50,7 +150,12 @@
       match: [S && logic.effectivePhase(S)],
       talk: [partners, S && S.phase, S && S.roundEndsAt,
         S && logic.incomingFor(S, me).length > 0],
-      feedback: [partners, local.fb, local.busy],
+      feedback: [
+        partners,
+        local.fb,
+        local.busy,
+        local.feedbackSubmitted
+      ],
       roundwait: [!!g],
       finished: [S && S.groups],
       team: [S && S.teams, S && S.teamsConfirmedAt, S && S.participants]
@@ -61,6 +166,7 @@
   /* ---------- render ---------- */
   function render() {
     renderTop();
+    checkConversationStart();
     const v = currentView();
     const sig = signature(v);
     if (sig === lastSig) { renderPairStatus(); return; }
@@ -284,10 +390,32 @@
     },
 
     feedback: () => {
-      const partners = logic.partnersOf(S, me);
+      const feedbackRound = getPendingFeedbackRound(S, me);
+      const round = feedbackRound ?? S.round;
+      const partners = logic.partnersOf(S, me, round);
+
       const allSet = partners.every(x => local.fb[x.id]);
+
+      if (local.feedbackSubmitted) {
+        return `
+          <section class="s-view stack s-center">
+            <h1>Thank for your feedback!</h1>
+            <p class="muted">
+              Your response has been saved.
+            </p>
+            <button
+              class="btn btn--primary btn--block"
+              data-act="continueAfterFeedback"
+            >
+              Continue
+            </button>
+          </section>
+        `;
+      }
+
       return `
       <section class="s-view stack">
+        <p class="qstep">Round ${round} feedback</p>
         <h1>Would you team up?</h1>
         <p class="muted">Only your tutor sees this. It helps them put teams together.</p>
         ${partners.map(x => `
@@ -402,12 +530,44 @@
         local.editing = S.round === 1 ? 'q1' : 'q2';
         render();
         break;
-      case 'sendFeedback':
-        local.busy = true; render();
-        await run(s => logic.giveFeedback(s, me, local.fb), 'Sent. Thanks!');
-        local.busy = false; local.fb = {};
+      case 'sendFeedback': {
+        const feedbackRound = getPendingFeedbackRound(S, me);
+
+        if (feedbackRound === null) {
+          render();
+          break;
+        }
+
+        local.busy = true;
+        render();
+
+        try {
+          const success = await run(
+            s => logic.giveFeedback(
+              s,
+              me,
+              local.fb,
+              feedbackRound
+            ),
+            'Your feedback has been sent successfully!'
+          );
+
+          if (success) {
+            local.feedbackSubmitted = true;
+            local.fb = {};
+          }
+        } finally {
+          local.busy = false;
+          render();
+        }
+
+        break;
+      }
+      case 'continueAfterFeedback': {
+        local.feedbackSubmitted =false;
         render();
         break;
+      }
     }
   });
 
@@ -454,12 +614,21 @@
       if (left <= 0) render();   // flips to the round-end screens
     }
   }
-  setInterval(tick, 500);
+  setInterval(() => {
+    checkConversationStart();
+    tick();
+  }, 500);
 
   Store.subscribe(code, s => {
     S = s;
     // a fresh round clears any half-made choices
-    if (s && local.round !== s.round) { local.round = s.round; local.pickStyle = null; local.editing = null; local.fb = {}; }
+    if (s && local.round !== s.round) {
+      local.round = s.round;
+      local.pickStyle = null;
+      local.editing = null;
+      local.fb = {};
+      local.feedbackSubmitted = false;
+    }
     render();
   });
 })();

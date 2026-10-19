@@ -23,6 +23,25 @@
     </header>
 
     <main class="s-main" id="view" aria-live="polite"></main>
+    <dialog id="conversationModal" class="feedback-modal">
+      <div class="feedback-modal__content">
+        <h2>Your conversation has started!</h2>
+
+        <p id="conversationModalMessage">
+          You have some time to chat with your partner.
+        </p>
+
+        <p id="conversationModalEndTime"></p>
+
+        <button
+          type="button"
+          id="conversationModalClose"
+          class="btn btn--primary btn--block"
+        >
+          Got it
+        </button>
+      </div>
+    </dialog>
   </div>
 
   <script src="../assets/js/config.js"></script>

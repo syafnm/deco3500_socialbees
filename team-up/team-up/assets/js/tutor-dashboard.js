@@ -91,7 +91,11 @@
 
   function renderControl() {
     const st = logic.stats(S);
-    const fbGiven = Object.values(S.feedback).filter(f => f.round === S.round).length;
+    const fbGiven = Object.values(S.feedback)
+      .filter(f =>
+        f.round === S.round &&
+        ['yes', 'maybe', 'no'].includes(f.choice)
+      ).length;
     const fbExpected = Object.values(S.groups).filter(g => g.round === S.round)
       .reduce((n, g) => n + g.members.length * (g.members.length - 1), 0);
 

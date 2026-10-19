@@ -179,6 +179,12 @@ body.student { background: var(--blush); }
 .fb__opt--yes[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); }
 .fb__opt--maybe[aria-pressed="true"] { background: var(--warn); border-color: var(--warn); }
 .fb__opt--no[aria-pressed="true"] { background: var(--muted); border-color: var(--muted); }
+.feedback-modal { width: min(420px, calc(100% - 32px)); padding: 0; border: none; border-radius: 16px; background: var(--paper); color: var(--text-primary); box-shadow: 0 12px 40px rgb(0 0 0 / 18%); }
+.feedback-modal::backdrop { background: rgb(15 23 42 / 45%); backdrop-filter: blur(3px); }
+.feedback-modal__content { padding: 28px; }
+.feedback-modal h2 { margin: 0 0 12px; color: var(--maroon); font-size: 1.4rem; font-weight: 700; line-height: 1.35; }
+.feedback-modal p { margin: 0 0 12px; font-size: 1rem; line-height: 1.6; }
+#conversationModalEndTime { margin-top: 16px; margin-bottom: 24px; font-weight: 600; }
 
 /* ---------- waiting + wrap-up ---------- */
 .waiting {
