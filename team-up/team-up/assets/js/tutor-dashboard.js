@@ -134,7 +134,7 @@
               </div>
             </div>
             <button class="btn btn--primary btn--block" data-act="startTalking" ${st.paired ? '' : 'disabled'}>Start ${ctlMinutes}-minute conversations</button>
-            <p class="muted small">Pairs see their prompts as soon as they match. Anyone still looking can pair after you start.</p>`;
+            <p class="muted small">Pairs see their questions as soon as they match. Anyone still looking can pair after you start.</p>`;
           break;
 
         case 'talking':
@@ -263,8 +263,9 @@
                 ${members.map(m => `<li>${ui.badge(S, m, g.round)}<span>${esc(m.name)}</span></li>`).join('')}
               </ul>
               <details>
-                <summary>Their prompts</summary>
-                <ol class="prompts-mini">${g.prompts.map(p => `<li>${esc(p)}</li>`).join('')}</ol>
+                <summary>Their questions</summary>
+                ${members.map(m => `<p class="prompts-mini__who">Asked to ${esc(m.name)}</p>
+                <ol class="prompts-mini">${logic.questionsFor(S, m, g.round).map(q => `<li>${esc(q)}</li>`).join('')}</ol>`).join('')}
               </details>
             </article>`;
         }).join('')}</div>`

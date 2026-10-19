@@ -48,7 +48,7 @@
       q1: [local.pickInterest],
       q2: [local.pickStyle],
       match: [S && logic.effectivePhase(S)],
-      talk: [partners, g && g.prompts, S && S.phase, S && S.roundEndsAt,
+      talk: [partners, S && S.phase, S && S.roundEndsAt,
         S && logic.incomingFor(S, me).length > 0],
       feedback: [partners, local.fb, local.busy],
       roundwait: [!!g],
@@ -271,9 +271,12 @@
           ${partners.map(x => cardFor(x, 'sm')).join('')}
         </div>
         ${timing}
+        ${partners.map(x => `
         <div class="prompts-wrap">
-          <h2>Things to talk about</h2>
-          <ol class="prompts">${g.prompts.map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+          <h2>Questions to ask ${esc(x.name)}</h2>
+          <ol class="prompts">${logic.questionsFor(S, x).map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+        </div>`).join('')}
+        <div class="prompts-wrap">
           <p class="small muted">These are optional. Follow the conversation wherever it goes.</p>
         </div>
         ${logic.incomingFor(S, me).length && g.members.length < S.settings.maxGroupSize ? pairBox('join') : ''}

@@ -12,8 +12,9 @@
   const L = {
     id(len = 10) {
       const c = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let s = '';
-      for (let i = 0; i < len; i++) s += c[Math.floor(Math.random() * c.length)];
+      // always start with a letter: Firebase turns all-number keys into arrays
+      let s = c[Math.floor(Math.random() * 26)];
+      for (let i = 1; i < len; i++) s += c[Math.floor(Math.random() * c.length)];
       return s;
     },
     joinCode() {
@@ -182,7 +183,7 @@
         } else {
           const g = {
             id: L.id(8), round: s.round, members: [other.id, pid], matchType: type,
-            createdAt: Date.now(), prompts: L.buildPrompts(s, other, me, type)
+            createdAt: Date.now()
           };
           s.groups[g.id] = g;
         }
@@ -207,22 +208,12 @@
       return partners.every(p => s.feedback[`${s.round}_${pid}_${p.id}`]);
     },
 
-    /* ---------- prompts ---------- */
-    buildPrompts(s, a, b, type) {
-      const P = TU.PROMPTS;
-      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-      const fill = (t, x, y) => t.replace(/\{a\}/g, x).replace(/\{b\}/g, y);
-      const ia = L.interest(a.interest), ib = L.interest(b.interest);
-      const sa = L.style(L.styleOf(s, a)), sb = L.style(L.styleOf(s, b));
-
-      const p1 = a.interest === b.interest
-        ? pick(P.interest[a.interest])
-        : fill(pick(P.interestBridge), ia.label, ib.label);
-      const p2 = sa.id === sb.id
-        ? pick(P.style[sa.id])
-        : fill(pick(P.styleContrast), sa.label, sb.label);
-      const p3 = pick(P.match[type]);
-      return [p1, p2, p3];
+    /* ---------- conversation questions ----------
+       The 3 questions that fit a person's card for a given round.
+       Shown to whoever is talking WITH that person. */
+    questionsFor(s, p, round = s.round) {
+      if (!p) return [];
+      return TU.QUESTION_SETS[`${p.interest}_${L.styleOf(s, p, round)}`] || [];
     },
 
     /* ---------- tutor actions ---------- */

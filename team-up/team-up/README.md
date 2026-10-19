@@ -1,6 +1,6 @@
 # Team Up — DECO3500 (Social Bees)
 
-A tutor-run, in-class matchmaking activity. Students get a card (colour = interest, icon = working style), walk around to find someone who shares their colour, icon or both, pair up by typing that person's PIN, talk through three prompts, and say whether they'd team up. The tutor runs the rounds and sees who wants to work with whom.
+A tutor-run, in-class matchmaking activity. Students get a card (colour = interest, icon = working style), walk around to find someone who shares their colour, icon or both, pair up by typing that person's PIN, ask each other three questions based on their cards, and say whether they'd team up. The tutor runs the rounds and sees who wants to work with whom.
 
 Plain HTML, CSS and JavaScript. No build step, no framework.
 
@@ -22,10 +22,10 @@ team-up/
     │   ├── tutor.css           Desktop-first, collapses to one column on phones
     │   └── student.css         Mobile-first, phone-width column on desktop
     ├── js/
-    │   ├── config.js           Interests, working styles, icons, question text, all prompts  ← edit content here
+    │   ├── config.js           Interests, working styles, icons, question text, conversation questions  ← edit content here
     │   ├── firebase-config.js  Paste Firebase config here for real multi-device use
     │   ├── store.js            Data layer (localStorage or Firebase, same API)
-    │   ├── logic.js            Rules: joining, PINs, pairing checks, prompts, results, CSV
+    │   ├── logic.js            Rules: joining, PINs, pairing, questions, results, CSV
     │   ├── ui.js               Shared helpers: card rendering, QR, toasts, timer format
     │   ├── tutor-setup.js
     │   ├── tutor-dashboard.js
@@ -41,14 +41,14 @@ team-up/
 |---|---|---|
 | Join (`lobby`) | Shares QR / code, presses **Open questions** | Name + student ID, then their PIN while waiting |
 | Questions | Watches cards come in, presses **Start matching** | Q1 Interest → colour, Q2 Working style → icon, then their card |
-| Matching | Sets 5–15 min, presses **Start conversations** | Big card + PIN, "Look for" hint, PIN entry. A pair forms once both have entered each other's PIN, then they see prompts |
-| Conversations (`talking`) | Timer, **Add 1 minute**, **End round now** | Partner cards, timer, 3 tailored prompts |
+| Matching | Sets 5–15 min, presses **Start conversations** | Big card + PIN, "Look for" hint, PIN entry. A pair forms once both have entered each other's PIN, then they see their questions |
+| Conversations (`talking`) | Timer, **Add 1 minute**, **End round now** | Partner cards, timer, 3 questions to ask their partner |
 | Wrap-up (`roundEnd`) | Sees answers come in, **Start round N** or **Finish session** | "Would you team up?" (Keen / Maybe / Not this time) |
 | Next round | — | Keeps interest colour, only re-picks working style |
 | Finished | Team-up interest table, **Download CSV** | People they met |
 
 Pairing rules (in `logic.js → pairWithPin`):
-- Anyone can pair with anyone. Colour and icon only decide which prompts the pair gets.
+- Anyone can pair with anyone. Colour and icon only decide which questions each person is asked.
 - Both people type each other's PIN. The first entry is a request ("Waiting for Ben to enter yours"); the conversation starts when the second person enters the first person's PIN. A student can cancel a request or send a new one (one request at a time).
 - The PIN box is on screen from the moment a student joins, but it only unlocks once they have a card and matching is open.
 - PINs are 4 digits, unique, and stay the same all session.
@@ -57,7 +57,7 @@ Pairing rules (in `logic.js → pairWithPin`):
 - With "Allow repeat partners" off, the same two students can't pair again in later rounds.
 - The tutor can split a pair or remove a student from the dashboard.
 
-Prompts (in `config.js → TU.PROMPTS`): each pair gets one interest prompt (shared interest, or a "bridge" prompt for different interests), one working-style prompt (shared style, or a "contrast" prompt), and one prompt based on what they have in common (both / colour / icon / nothing).
+Conversation questions (in `config.js → TU.QUESTION_SETS`): there is one set of 3 questions for each of the 16 cards (interest + working style). Each student sees the set for their partner's card, so Ana asks Ben the questions for Ben's card and Ben asks Ana the questions for hers. In a trio, each student sees a set for each partner.
 
 ## Forming project teams
 
@@ -92,7 +92,7 @@ Phones and laptops will **not** see each other in demo mode.
 1. Create a Firebase project at console.firebase.google.com and add a Web app.
 2. Build → Realtime Database → Create database (pick the Australia region).
 3. Paste the web app config into `assets/js/firebase-config.js`.
-4. Set these database rules (fine for a class prototype; anyone with a session code can read and write it):
+4. Set these database rules (also saved as `database.rules.json`) (fine for a class prototype; anyone with a session code can read and write it):
    ```json
    {
      "rules": {
@@ -112,7 +112,7 @@ No other code changes: `store.js` switches to Firebase automatically when a conf
 - Working styles, icons (24×24 SVG paths), blurbs: `TU.STYLES`
 - Question wording: `TU.QUESTIONS`
 - Round length limits, trio size, repeat-partner default: `TU.DEFAULTS`
-- Conversation prompts: `TU.PROMPTS`
+- Conversation questions: `TU.QUESTION_SETS` (keys are `interest_style`, e.g. `creative_planner`)
 
 ## Notes for the prototype write-up
 - No logins. Tutors are identified by the session they created on their device; students by student ID within a session (rejoining with the same ID restores their card).

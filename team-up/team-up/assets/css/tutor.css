@@ -306,3 +306,5 @@ body.tutor { background: var(--blush); }
 .team--add:hover { border-color: var(--maroon-2); }
 .pool { background: var(--paper); border: 1.5px dashed var(--line); border-radius: var(--r-md); padding: 1rem; }
 .pool__list { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); column-gap: 1.25rem; }
+
+.prompts-mini__who { font-size: var(--t-xs); font-weight: 700; color: var(--muted); margin-top: .6rem; }

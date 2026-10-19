@@ -27,7 +27,7 @@
     Object.values(s.teams).forEach(t => { t.members = t.members || []; });
     s.settings = Object.assign({}, TU.DEFAULTS, s.settings || {});
     Object.values(s.participants).forEach(p => { p.styles = p.styles || {}; });
-    Object.values(s.groups).forEach(g => { g.members = g.members || []; g.prompts = g.prompts || []; });
+    Object.values(s.groups).forEach(g => { g.members = g.members || []; });
     return s;
   }
 

@@ -52,81 +52,95 @@ TU.DEFAULTS = {
   allowRepeats: false   // can the same two people pair again in a later round?
 };
 
-/* ---------- Conversation prompts ----------
-   Each pair gets 3 prompts:
-   1. an interest prompt   (same interest → that bank, different → "bridge" bank)
-   2. a working-style prompt (same style → that bank, different → "contrast" bank)
-   3. a match prompt based on what they share (both / colour only / icon only)
-   {a} and {b} are swapped for the two labels where used.
+/* ---------- Conversation questions ----------
+   One set of 3 questions for every card (interest_workingStyle).
+   Each student sees the set for their PARTNER's card, so they ask
+   questions that fit the person in front of them.
+   Interest ids: research, creative, technology, management
+   Style ids:    idea, collaborator, solver, planner
 */
-TU.PROMPTS = {
-  interest: {
-    research: [
-      "What's something you've gone down a rabbit hole researching lately?",
-      'How do you decide whether a source is worth trusting?',
-      'If you could investigate any question for a whole semester, what would it be?'
-    ],
-    creative: [
-      "What's something you made that you're proud of, even if no one else saw it?",
-      'Where do you go for inspiration when you get stuck?',
-      "What's your favourite tool or medium to make things with?"
-    ],
-    technology: [
-      "What's a piece of tech you use every day that you'd redesign?",
-      "What's the last thing you built, coded or tinkered with?",
-      'Which tool or language do you want to get better at this semester?'
-    ],
-    management: [
-      'How do you keep a group project on track when everyone gets busy?',
-      'What makes a team meeting actually worth having?',
-      "Tell each other about a deadline you saved at the last minute. How?"
-    ]
-  },
-  interestBridge: [
-    'One of you is into {a}, the other {b}. How could those two help each other on a project?',
-    "Explain what you love about your area like your partner has never heard of it. What surprised you about theirs?",
-    "What's one thing from your partner's area you'd actually like to learn?"
+TU.QUESTION_SETS = {
+  research_idea: [
+    'How are you today?',
+    'What topics do you enjoy exploring or learning about?',
+    'When you have a new idea, do you prefer exploring many possibilities first?'
   ],
-  style: {
-    idea: [
-      'Pitch each other a wild project idea in 30 seconds each.',
-      'How do you decide which of your ideas is worth chasing?'
-    ],
-    planner: [
-      'Show each other how you plan a week. App, paper, or vibes?',
-      'What do you do when a plan falls apart halfway through?'
-    ],
-    solver: [
-      "What's a problem you cracked recently that felt great?",
-      'When you get stuck, do you push through or step away for a bit?'
-    ],
-    collaborator: [
-      "What's the best team you've been part of, and why did it work?",
-      'How do you bring a quiet teammate into the conversation?'
-    ]
-  },
-  styleContrast: [
-    "One of you is the {a}, the other the {b}. Where might you clash on a project, and how would you sort it out?",
-    'What could the {a} learn from the {b}, and the other way round? Swap one habit each.',
-    'Split a pretend project: what would the {a} take on first, and what would the {b}?'
+  research_collaborator: [
+    'How are you today?',
+    'What topics do you enjoy exploring or learning about?',
+    'Do you enjoy sharing your thoughts and exploring ideas with others?'
   ],
-  match: {
-    both: [
-      "You matched on everything. Find one way you're actually different.",
-      "Same interest, same style. What would you two need from a third teammate?"
-    ],
-    color: [
-      'Same interest, different style. Sketch a mini project where you each lead a part.',
-      'You like the same kind of work. What would you want to make together this semester?'
-    ],
-    none: [
-      "Different interests and different styles. What's one thing about how your partner works that surprised you?",
-      "You see things from different angles. What's one thing you'd want a teammate to know about how you work?",
-      "What would you each need from the other to work well together?"
-    ],
-    icon: [
-      'Same working style, different interests. What project would use both your interests?',
-      "You work the same way. What's one team habit you both can't stand?"
-    ]
-  }
+  research_solver: [
+    'How are you today?',
+    'What topics do you enjoy exploring or learning about?',
+    'When solving a problem, do you enjoy researching it before trying solutions?'
+  ],
+  research_planner: [
+    'How are you today?',
+    'What topics do you enjoy exploring or learning about?',
+    'Do you like planning your research before getting started?'
+  ],
+
+  creative_idea: [
+    'How are you today?',
+    'What do you enjoy creating or designing?',
+    'When creating something, do you prefer exploring lots of different ideas?'
+  ],
+  creative_collaborator: [
+    'How are you today?',
+    'What do you enjoy creating or designing?',
+    'Do you enjoy creating things together with other people?'
+  ],
+  creative_solver: [
+    'How are you today?',
+    'What do you enjoy creating or designing?',
+    "When a design idea doesn't work, do you enjoy trying different solutions?"
+  ],
+  creative_planner: [
+    'How are you today?',
+    'What do you enjoy creating or designing?',
+    'Do you like planning your design before you start creating?'
+  ],
+
+  technology_idea: [
+    'How are you today?',
+    'What kind of technology do you enjoy exploring?',
+    'When exploring technology, do you enjoy imagining new ways to use it?'
+  ],
+  technology_collaborator: [
+    'How are you today?',
+    'What kind of technology do you enjoy exploring?',
+    'Do you enjoy exploring new technology with other people?'
+  ],
+  technology_solver: [
+    'How are you today?',
+    'What kind of technology do you enjoy exploring?',
+    "When technology doesn't work as expected, do you enjoy figuring out why?"
+  ],
+  technology_planner: [
+    'How are you today?',
+    'What kind of technology do you enjoy exploring?',
+    'Do you like planning how to build something before you start?'
+  ],
+
+  management_idea: [
+    'How are you today?',
+    'What do you enjoy organising or planning?',
+    'When organising a project, do you enjoy finding new ways to do things?'
+  ],
+  management_collaborator: [
+    'How are you today?',
+    'What do you enjoy organising or planning?',
+    'Do you enjoy planning tasks together with other people?'
+  ],
+  management_solver: [
+    'How are you today?',
+    'What do you enjoy organising or planning?',
+    'When a project gets complicated, do you enjoy finding ways to solve the problem?'
+  ],
+  management_planner: [
+    'How are you today?',
+    'What do you enjoy organising or planning?',
+    'Do you prefer making a plan before starting a project?'
+  ]
 };
